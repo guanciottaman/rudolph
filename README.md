@@ -43,8 +43,9 @@ pip install -r requirements.txt
 
 ### 3. Run the launcher
 
+```bash
 python main.py
-
+```
 On Linux, you can toggle the launcher by creating the /tmp/launcher_trigger file. (set a desktop environment shortcut to `touch /tmp/launcher_trigger`)
 On Windows, the global shortcut (defined in settings.ini) will toggle it directly.
 
