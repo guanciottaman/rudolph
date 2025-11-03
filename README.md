@@ -41,6 +41,13 @@ pip install -r requirements.txt
 ```
 
 
+### 3. Run the launcher
+
+python main.py
+
+On Linux, you can toggle the launcher by creating the /tmp/launcher_trigger file. (set a desktop environment shortcut to `touch /tmp/launcher_trigger`)
+On Windows, the global shortcut (defined in settings.ini) will toggle it directly.
+
 ## 🧩 Commands Overview
 | Command |	Description | Example |
 | ------- | ----------- | ------- |
@@ -49,8 +56,8 @@ pip install -r requirements.txt
 |yt `<query>`	|Search YouTube	|yt linux tutorials|
 |ddg `<query>`	|Search DuckDuckGo	|ddg python threads|
 |wiki `<query>`|	Open Wikipedia page|	wiki Alan Turing|
-|wikisum v<query>` |	Fetch Wikipedia summary	|wikisum Rome|
-|plx <query> | Search on Perplexity	|plx quantum computing|
+|wikisum `<query>` |	Fetch Wikipedia summary	|wikisum Rome|
+|plx `<query> `| Search on Perplexity	|plx quantum computing|
 
 ## ⚙️ Configuration
 
