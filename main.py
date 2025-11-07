@@ -1,7 +1,8 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QApplication, QSizePolicy
-from PySide6.QtCore import Qt, QObject, QThread, Signal, QTimer, QSize
-from PySide6.QtGui import QShortcut, QIcon, QAction
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLineEdit, QApplication, QSizePolicy, QSystemTrayIcon, QMenu
+from PySide6.QtCore import Qt, QObject, QThread, Signal, QTimer
+from PySide6.QtGui import QShortcut, QIcon, QAction, QCursor
 from keyboard import add_hotkey
+
 
 import sys
 import os
@@ -83,16 +84,32 @@ class WikipediaWorker(QObject):
 
 class Launcher(QWidget):
     def __init__(self):
-        super().__init__()
+        super().__init__(
+            parent=None,
+            f=Qt.WindowType.Tool | Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint
+        )
 
         self.threads = []
-
-        self.setWindowFlags(
-            Qt.WindowType.FramelessWindowHint |
-            Qt.WindowType.WindowStaysOnTopHint |
-            Qt.WindowType.Tool
-        )
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.setAttribute(Qt.WidgetAttribute.WA_ShowWithoutActivating)
+
+        self.setWindowIcon(QIcon(os.path.join(os.getcwd(), "assets", "icons", "icon.png")))
+
+        self.tray_icon = QSystemTrayIcon(QIcon(os.path.join(os.getcwd(), "assets", "icons", "icon.png")), self)
+        self.tray_icon.setToolTip("Rudolph Launcher")
+
+        menu = QMenu()
+        open_action = QAction("Open / Hide", self)
+        open_action.triggered.connect(self.toggle)
+        quit_action = QAction("Quit", self)
+        quit_action.triggered.connect(QApplication.instance().quit)
+
+        menu.addAction(open_action)
+        menu.addSeparator()
+        menu.addAction(quit_action)
+
+        self.tray_icon.setContextMenu(menu)
+        self.tray_icon.show()
 
         self.main_layout = QVBoxLayout()
         self.main_layout.setContentsMargins(0, 0, 0, 0)
@@ -111,7 +128,6 @@ class Launcher(QWidget):
             }
         """)
         self.entry.textChanged.connect(self.process_query)
-
 
         self.settings_icon_path = os.path.join(os.getcwd(), "assets", "icons", "settings.png")
         self.settings_action = QAction(QIcon(self.settings_icon_path), "", self.entry)
@@ -155,6 +171,7 @@ class Launcher(QWidget):
             "e": ("expression", lambda args: self.solve_expression(' '.join(args))),
             "c": ("conversion", lambda args: self.convert_measure(float(args[0]), args[1], args[2])
                     if len(args) == 3 else None),
+            "temp": ("temp", lambda args: self.city_weather(' '.join(args))),
             "yt": ("youtube", lambda args: webbrowser.open(f"https://youtube.com/search?q={' '.join(args)}")),
             "ddg": ("duckduckgo", lambda args: webbrowser.open(f"https://duckduckgo.com/search?q={' '.join(args)}")),
             "wiki": ("wikipedia", lambda args: webbrowser.open(f"https://en.wikipedia.org/wiki/{'_'.join(args)}")),
@@ -165,9 +182,13 @@ class Launcher(QWidget):
         self.entry.returnPressed.connect(self.hide)
         self.entry.focusOutEvent = lambda _: self.hide()
         self.setLayout(self.main_layout)
+
+    def on_tray_click(self, reason):
+        if reason == QSystemTrayIcon.ActivationReason.Trigger:
+            QTimer.singleShot(50, self.toggle)
+
     
     def open_settings(self):
-        # Se esiste già una finestra, distruggila prima
         if hasattr(self, "settings_window") and self.settings_window is not None:
             try:
                 self.settings_window.close()
@@ -175,7 +196,6 @@ class Launcher(QWidget):
             except:
                 pass
 
-        # Crea una nuova istanza fresca ogni volta
         self.settings_window = SettingsWindow(parent=self)
         self.settings_window.setWindowFlags(
             Qt.WindowType.Window | Qt.WindowType.WindowStaysOnTopHint
@@ -184,8 +204,6 @@ class Launcher(QWidget):
         self.settings_window.show()
         self.settings_window.raise_()
         self.settings_window.activateWindow()
-
-
     
     def reg_command(self, command:str):
         self.commands.append(command)
@@ -288,7 +306,7 @@ class Launcher(QWidget):
                 setting_name, func = self.command_map[cmd]
                 if config.getboolean("Commands", setting_name):
                     if cmd in ("e", "c"):
-                        func(args)  # sempre in tempo reale
+                        func(args)
                     elif text.endswith("  "):
                         self.reg_command(text[:-1])
                         func(args)
@@ -299,11 +317,17 @@ class Launcher(QWidget):
             self.hide()
         else:
             self.show()
-            QTimer.singleShot(10, lambda: self.entry.setFocus())
+            QTimer.singleShot(50, lambda: (
+                self.raise_(),
+                self.activateWindow(),
+                self.entry.setFocus()
+            ))
 
 
 
 app = QApplication(sys.argv)
+app.setDesktopFileName("rudolph.desktop")
+app.setWindowIcon(QIcon.fromTheme("rudolph"))
 launcher = Launcher()
 launcher.toggle()
 
