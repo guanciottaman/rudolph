@@ -27,7 +27,7 @@ It's a lightweight alternative to Raycast or Alfred — no accounts, no telemetr
 ### Install via pip
 
 ```bash
-pip install --user rudolph
+pip install --user rudolph-launcher
 ```
 This will install Rudolph and rudolph-install-service in  `~/.local/bin`
 
