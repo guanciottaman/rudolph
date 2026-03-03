@@ -24,6 +24,26 @@ It's a lightweight alternative to Raycast or Alfred — no accounts, no telemetr
 
 ## 🛠️ Installation
 
+### Install via pip
+
+```bash
+pip install --user rudolph
+```
+This will install Rudolph and rudolph-install-service in  `~/.local/bin`
+
+Make sure `~/.local/bin` is in your PATH (use .zshrc or your shell configuration file instead of .bashrc if you use any other shell):
+```bash
+echo 'export PATH=$HOME/.local/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
+```
+
+Activate the background service: 
+```bash
+rudolph-install-service
+```
+
+### Install manually
+
 ### 1. Clone the repository
 
 ```bash
@@ -46,8 +66,16 @@ pip install -r requirements.txt
 ```bash
 python main.py
 ```
-On Linux, you can toggle the launcher by creating the /tmp/launcher_trigger file. (set a desktop environment shortcut to `touch /tmp/launcher_trigger`)
+### Setting up your hotkey (FOR BOTH METHODS)
+On Linux, you can toggle the launcher by creating the /tmp/launcher_trigger file. Set up your hotkey:
+1. Open Settings → Keyboard → Custom Shortcuts
+2. Add a new shortcut:
+   - Name: Rudolph Launcher
+   - Command: `/home/<user>/.local/bin/rudolph`
+   - Shortcut: Super+Space (or your preferred)
 On Windows, the global shortcut (defined in settings.ini) will toggle it directly.
+> ⚠️ On Linux: remember to set your custom shortcut manually in your desktop environment.  
+> ⚠️ On Windows: the global shortcut is handled via `settings.ini`.
 
 ## 🧩 Commands Overview
 | Command |	Description | Example |

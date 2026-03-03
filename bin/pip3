@@ -1,4 +1,4 @@
-#!/home/guanciottaman/python_projects/rudolph/bin/python3
+#!/home/guanciottaman/python_projects/rudolph/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys

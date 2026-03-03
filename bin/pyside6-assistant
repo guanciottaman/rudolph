@@ -1,7 +1,6 @@
-#!/home/guanciottaman/python_projects/rudolph/bin/python3
+#!/home/guanciottaman/python_projects/rudolph/bin/python
 import sys
 from PySide6.scripts.pyside_tool import assistant
 if __name__ == '__main__':
-    if sys.argv[0].endswith('.exe'):
-        sys.argv[0] = sys.argv[0][:-4]
+    sys.argv[0] = sys.argv[0].removesuffix('.exe')
     sys.exit(assistant())

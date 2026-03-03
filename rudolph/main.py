@@ -15,9 +15,9 @@ from configparser import ConfigParser
 import re
 import math
 
-from result_widget import ResultWidget
-from settings_popup import SettingsWindow
-from units_formatted import UNITS
+from rudolph.result_widget import ResultWidget
+from rudolph.settings_popup import SettingsWindow
+from rudolph.units_formatted import UNITS
 
 
 config = ConfigParser()
